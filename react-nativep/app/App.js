@@ -10,7 +10,7 @@ import { store } from './store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //for logout purpose
-// AsyncStorage.clear();j
+// AsyncStorage.clear();
 
 SplashScreen.preventAutoHideAsync();
 

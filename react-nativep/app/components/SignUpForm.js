@@ -47,7 +47,7 @@ import { useDispatch } from 'react-redux';
 		},[error]
 	);
 
-	const authHandler = async ()=>{
+	const authHandler = useCallback(async ()=>{
 		try {
 			setIsLoading(true);
 
@@ -58,13 +58,14 @@ import { useDispatch } from 'react-redux';
 					formState.inputValues.password,
 			)
 
-			dispatch(action);
 			setError(null);
+			await dispatch(action);
+			
 		} catch (error) {
 			setError(error);
 			setIsLoading(false);
 		}
-	}
+	},[dispatch,formState]);
 
 	return (
 		<>

@@ -1,9 +1,12 @@
 import { getFirebaseApp } from "../firebaseHelper";
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { child, getDatabase, ref, set } from 'firebase/database';
-import { authenticate } from "../../store/authSlice";
+import { authenticate, logout } from "../../store/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getUserData } from "./userActions";
 
+
+let timer;
 export const signUp = (firstName,lastName,email,password) =>{
 	return async dispatch =>{
 
@@ -16,15 +19,20 @@ export const signUp = (firstName,lastName,email,password) =>{
 				const { uid,stsTokenManager  } = result.user;
 				const { accessToken,expirationTime } = stsTokenManager;
 				const expiryDate = new Date(expirationTime);
+				const timeNow = new Date();
+				const millisecondsUntilExpiry = expiryDate - timeNow;
 
 				const userData = await createUser(firstName,lastName,email,uid);
 				  dispatch(authenticate({token:accessToken,userData}));
-					saveDateToStorage(accessToken,uid,expiryDate);
+					saveDataToStorage(accessToken,uid,expiryDate);
+					timer = setTimeout(()=>{
+							dispatch(userLogout());
+					},millisecondsUntilExpiry)
 
 		} catch (error) {
 			const errorCode = error.code;
 
-			console.log(error);
+			console.log(error);//myextracode
 
 			let message = "Something went wrong.";
 
@@ -34,6 +42,51 @@ export const signUp = (firstName,lastName,email,password) =>{
 
 			throw new Error(message);
 		}
+	}
+}
+
+export const signIn = (email,password) =>{
+	return async dispatch =>{
+
+		const app = getFirebaseApp();
+		const auth = getAuth(app);
+
+		try {
+				const result = await signInWithEmailAndPassword(auth,email,password);	
+				//uid is the uid column in user section in authentication in firebase
+				const { uid,stsTokenManager  } = result.user;
+				const { accessToken,expirationTime } = stsTokenManager;
+				const expiryDate = new Date(expirationTime);
+				const timeNow = new Date();
+				const millisecondsUntilExpiry = expiryDate - timeNow;
+
+				const userData = await getUserData(uid);
+				  dispatch(authenticate({token:accessToken,userData}));
+					saveDataToStorage(accessToken,uid,expiryDate);
+					timer = setTimeout(()=>{
+							dispatch(userLogout());
+					},millisecondsUntilExpiry)
+
+		} catch (error) {
+			const errorCode = error.code;
+
+			let message = "Something went wrong.";
+
+			if(errorCode==="auth/user-not-found"||errorCode==="auth/wrong-password"){
+				message = "username or password is incorrect";
+			}
+
+			throw new Error(message);
+		}
+	}
+}
+
+
+export const userLogout = ()=>{
+	return async dispatch =>{
+		AsyncStorage.clear();
+		clearTimeout(timer);
+		dispatch(logout());
 	}
 }
 
@@ -54,7 +107,7 @@ const createUser = async (firstName,lastName,email,userId)=>{
 	 return userData;
 }
 
-const saveDateToStorage = (token,userId,expiryDate)=>{
+const saveDataToStorage = (token,userId,expiryDate)=>{
 	AsyncStorage.setItem("userData",JSON.stringify({
 		token,
 		userId,
