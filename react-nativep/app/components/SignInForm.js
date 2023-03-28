@@ -66,14 +66,16 @@ const SignInForm = ()=>{
 		<>
 				<Input id="email" label="Email" icon="mail" iconPack={Feather}
 				onInputChange = {inputChangeHandler}
-				value={formState.inputValues.email}
+				initialValue={formState.inputValues.email}
 				errorText={formState.inputValidities["email"]}
 				autoCapitalize="none" keyboardType="email-address"/>
+				
 				<Input id="password" label="Password" icon="lock" iconPack={Feather}
 				onInputChange = {inputChangeHandler}
-				value={formState.inputValues.password}
+				initialValue={formState.inputValues.password}
 				errorText={formState.inputValidities["password"]}
 				autoCapitalize="none" secureTextEntry/>
+				
 				{
 				isLoading ? 
 				<ActivityIndicator size={'small'} color={colors.primary} style={{marginTop:37}} /> : 

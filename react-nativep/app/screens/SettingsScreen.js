@@ -1,18 +1,142 @@
-import React from 'react';
-import { View,Text,StyleSheet } from 'react-native';
+import React, { useCallback, useReducer, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import PageTitle from '../components/PageTitle';
+import PageContainer from '../components/PageContainer';
+import Input from '../components/Input';
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { reducer } from '../utils/reducers/formReducer';
+import { validateInput } from '../utils/actions/formActions';
+import { useDispatch, useSelector } from 'react-redux';
+import colors from '../constants/colors';
+import SubmitButton from '../components/SubmitButton';
+import { updateSignedInUserData, userLogout } from '../utils/actions/authActions';
+import { updateLoggedInUserData } from '../store/authSlice';
+
 
 const SettingsScreen = props => {
 
-	return <View style={styles.container}>
-		<Text>This is the setting screen.</Text>
-	</View>
+	const dispatch = useDispatch();
+
+	const [isLoading,setIsLoading] = useState(false);
+	const [showSuccessMessage,setShowSuccessMessage] = useState(false);
+	const userData = useSelector(state=>state.auth.userData);
+
+	const firstName = userData.firstName || "";
+	const lastName = userData.lastName || "";
+	const email = userData.email|| "";
+	const about = userData.about || "";
+
+	const initialState = {
+		inputValues:{
+			firstName,
+			lastName,
+			email,
+			about
+		},
+		inputValidities:{
+			firstName:undefined,
+			lastName:undefined,
+			email:undefined,
+			about:undefined,
+		},
+		formIsValid:false
+	}
+
+	const [formState,dispatchFormState] = useReducer(reducer,initialState);
+
+	const inputChangeHandler = useCallback((inputId,inputValue)=>{
+			const result = validateInput(inputId,inputValue);
+			dispatchFormState({inputId,validationResult:result,inputValue})
+		},[dispatchFormState]);
+
+	const saveHandler = useCallback(async ()=>{
+		 const updatedValues = formState.inputValues;	
+			try {
+				setIsLoading(true);
+				await updateSignedInUserData(userData.userId,updatedValues);
+				dispatch(updateLoggedInUserData({newData:updatedValues}));
+
+				setShowSuccessMessage(true);
+
+				setTimeout(()=>{
+					setShowSuccessMessage(false);	
+				},3000);
+
+			} catch (error) {
+				console.log(error);	
+			}
+			finally{
+				setIsLoading(false);
+			}
+			
+	},[formState,dispatch])
+
+	const hasChanged = ()=>{
+		 const currentValues = formState.inputValues;
+			return currentValues.firstName != firstName ||
+			 currentValues.lastName!=lastName ||
+			 currentValues.email!=email ||
+			 currentValues.about!=about;
+	}
+
+	return <PageContainer>
+						
+						<PageTitle text="Settings"/>
+
+						<Input id="firstName" label="First name" icon="user-o" iconPack={FontAwesome}
+						autoCapitalize="none"
+						errorText={formState.inputValidities["firstName"]}
+						onInputChange = {inputChangeHandler}
+						initialValue = {userData.firstName}/>
+						
+						<Input id="lastName" label="Last name" icon="user-o" iconPack={FontAwesome}
+						autoCapitalize="none"
+						errorText={formState.inputValidities["lastName"]}
+						onInputChange = {inputChangeHandler}
+						initialValue ={userData.lastName}/>
+
+						<Input id="email" label="Email" icon="mail" iconPack={Feather}
+						keyboardType="email-address"//this property add a @ in the keyboard	
+						autoCapitalize="none"
+						errorText={formState.inputValidities["email"]}
+						onInputChange = {inputChangeHandler}
+						initialValue = {userData.email}/>
+
+						<Input id="about" label="About" icon="user-o" iconPack={FontAwesome}
+						autoCapitalize="none"
+						errorText={formState.inputValidities["about"]}
+						onInputChange = {inputChangeHandler}
+						initialValue = {userData.about}/>
+						<View style={{marginTop:20}}>
+							{					
+							  showSuccessMessage && <Text>Saved!</Text>
+							}
+						
+						{
+						isLoading ? 
+						<ActivityIndicator size={'small'} color={colors.primary} style={{marginTop:37}} /> : 
+							hasChanged() &&
+							<SubmitButton 
+							title="Save" 
+							style={{marginTop:20}}
+							onPress={saveHandler} 
+							disabled = {!formState.formIsValid} />
+						}
+						</View>
+						
+							<SubmitButton 
+							title="Log Out" 
+							style={{marginTop:20}}
+							onPress={()=>{dispatch(userLogout())}}
+							color={colors.red}/> 
+							
+
+				</PageContainer>
 }
 
 const styles = StyleSheet.create({
 container:{
 	flex:1,
-	justifyContent:'center',
-	alignItems:'center'
 }
 });
 export default SettingsScreen;
