@@ -11,6 +11,8 @@ import colors from '../constants/colors';
 import SubmitButton from '../components/SubmitButton';
 import { updateSignedInUserData, userLogout } from '../utils/actions/authActions';
 import { updateLoggedInUserData } from '../store/authSlice';
+import ProfileImage from '../components/ProfileImage';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const SettingsScreen = props => {
@@ -83,6 +85,13 @@ const SettingsScreen = props => {
 						
 						<PageTitle text="Settings"/>
 
+						<ScrollView contentContainerStyle={styles.formContainer}>
+							
+						<ProfileImage 
+						  size={80}
+							userId={userData.userId}
+							uri={userData.profilePicture}/>
+
 						<Input id="firstName" label="First name" icon="user-o" iconPack={FontAwesome}
 						autoCapitalize="none"
 						errorText={formState.inputValidities["firstName"]}
@@ -130,6 +139,7 @@ const SettingsScreen = props => {
 							onPress={()=>{dispatch(userLogout())}}
 							color={colors.red}/> 
 							
+						 </ScrollView>					
 
 				</PageContainer>
 }
@@ -137,6 +147,9 @@ const SettingsScreen = props => {
 const styles = StyleSheet.create({
 container:{
 	flex:1,
+},
+formContainer:{
+	alignItems:'center'
 }
 });
 export default SettingsScreen;
