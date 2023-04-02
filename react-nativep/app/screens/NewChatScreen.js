@@ -1,27 +1,25 @@
 import React, { useEffect } from 'react';
-import {Button, View,Text,StyleSheet } from 'react-native';
+import {View,Text,StyleSheet } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 
-const ChatListScreen = props => {
+const NewChatScreen = props => {
 
 	useEffect(()=>{
 			props.navigation.setOptions({
-				headerRight:()=>{
+				headerLeft:()=>{
 						return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 						<Item
-						title="New chat"
-						iconName='create-outline'
-						onPress={()=>props.navigation.navigate("NewChat")}/>
+						title="Close"
+						onPress={()=>props.navigation.goBack()}/>
 					</HeaderButtons>
-				}
+				},
+				headerTitle:"New chat"
 			})
 	},[]);
 
 	return <View style={styles.container}>
-		<Text>This is the chat list screen.</Text>
-		<Button title="go to Chat Screen" onPress={()=>{props.navigation.navigate("ChatScreen")}}/>
-		<Button title="go to Chat settings" onPress={()=>{props.navigation.navigate("ChatSettings")}}/>
+		<Text>This is the New chat screen.</Text>
 	</View>
 }
 
@@ -32,4 +30,4 @@ container:{
 	alignItems:'center'
 }
 });
-export default ChatListScreen;
+export default NewChatScreen;
