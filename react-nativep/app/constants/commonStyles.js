@@ -4,6 +4,6 @@ export default StyleSheet.create({
 	center:{
 		flex:1,
 		justifyContent:'center',
-		alignItem:'center'
+		alignItems:'center'
 	}
 });

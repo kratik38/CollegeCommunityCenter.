@@ -10,6 +10,12 @@ npm-debug.*
 *.orig.*
 web-build/
 
+internship/
+important_programs/
+DC/
+web_development/
+.vscode/
+
 # macOS
 .DS_Store
 
