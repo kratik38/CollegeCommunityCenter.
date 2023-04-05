@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {View,Text,StyleSheet, TextInput } from 'react-native';
+import {View,Text,StyleSheet, TextInput, ActivityIndicator, FlatList } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import { FontAwesome } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import PageContainer from '../components/PageContainer';
 import commonStyles from '../constants/commonStyles';
+import { searchUsers } from '../utils/actions/userActions';
+import DataItem from '../components/DataItem';
 
 const NewChatScreen = props => {
 
@@ -28,7 +30,7 @@ const NewChatScreen = props => {
 	},[]);
 
 	useEffect(()=>{
-	const delaySearch = setTimeout(()=>{
+	const delaySearch = setTimeout(async ()=>{
 			if(!searchTerm || searchTerm===""){
 				setUsers();
 				setNoResultsFound(false);
@@ -37,7 +39,16 @@ const NewChatScreen = props => {
 
 			setIsLoading(true);
 
-			//search users here 
+			const userResult = await searchUsers(searchTerm);
+
+			setUsers(userResult);
+			if(Object.keys(userResult).length=== 0 )
+			{
+				setNoResultsFound(true);
+			}
+			else{
+				setNoResultsFound(false);
+			}
 
 			setIsLoading(false);
 		},500);
@@ -53,6 +64,31 @@ const NewChatScreen = props => {
 					style={styles.searchBox}
 					onChangeText={(text)=>setSearchTerm(text)}/>
 			</View>
+
+			{
+				isLoading &&
+				<View style={commonStyles.center}>
+					<ActivityIndicator size={'large'} color={colors.primary}/>
+				</View>
+			}
+
+			{
+				//add some random users using randomuser.me/api
+				!isLoading && !noResultsFound && users && 
+				<FlatList
+				 data={Object.keys(users)}
+				 renderItem={(itemData)=>{
+						const userId = itemData.item;
+						const userData = users[userId];
+
+						return <DataItem 
+										title={`${userData.firstName} ${userData.lastName}`}
+										subTitle={userData.about}
+										image={userData.profilePicture}
+										/> 
+				 }}
+				/>
+			}
 
 			{
 				!isLoading && noResultsFound && (
