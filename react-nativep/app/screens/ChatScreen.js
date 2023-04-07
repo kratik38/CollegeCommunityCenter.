@@ -1,13 +1,38 @@
-import React,{ useCallback, useState } from 'react';
+import React,{ useCallback, useEffect, useState } from 'react';
 import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, } from 'react-native';
 import backgroundImage from '../assets/image/droplet.jpeg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import colors from '../constants/colors';
+import { useSelector } from 'react-redux';
 
 const ChatScreen = props => {
 
+	const userData = useSelector(state=>state.auth.userData);
+	const storedUsers = useSelector(state=>state.users.storedUsers);
+
+
+	const [chatUsers,setChatUsers] = useState([]);
 	const [messageText,setMessageText] = useState("");
+
+	const chatData = props.route?.params?.newChatData;
+
+	const getChatTitleFromName = ()=>{
+		const otherUserId = chatUsers.find(uid=>uid!==userData.userId);
+		const otherUserData = storedUsers[otherUserId];
+
+		return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
+	}
+
+	useEffect(()=>{
+
+		props.navigation.setOptions({
+			headerTitle:getChatTitleFromName()
+		})
+
+		setChatUsers(chatData.users);
+	},[chatUsers]);
+
 
 	const sendMessage = useCallback(()=>{
 			setMessageText("");
