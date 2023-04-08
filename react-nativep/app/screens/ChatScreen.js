@@ -1,10 +1,13 @@
 import React,{ useCallback, useEffect, useState } from 'react';
-import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, } from 'react-native';
+import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform, } from 'react-native';
 import backgroundImage from '../assets/image/droplet.jpeg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { useSelector } from 'react-redux';
+import PageContainer from '../components/PageContainer';
+import Bubble from '../components/Bubble';
+import { createChat } from '../utils/actions/chatActions';
 
 const ChatScreen = props => {
 
@@ -14,6 +17,7 @@ const ChatScreen = props => {
 
 	const [chatUsers,setChatUsers] = useState([]);
 	const [messageText,setMessageText] = useState("");
+	const [chatId,setChatId] = useState(props.route?.params?.chatId);
 
 	const chatData = props.route?.params?.newChatData;
 
@@ -34,9 +38,24 @@ const ChatScreen = props => {
 	},[chatUsers]);
 
 
-	const sendMessage = useCallback(()=>{
+	const sendMessage = useCallback(async ()=>{
+		
+		try {
+
+			let id = chatId;
+
+			if(!id){
+				id = await createChat(userData.userId, props.route.params.newChatData);
+				setChatId(id);
+			}
+			
+		} catch (error) {
+			
+		}
+
+			
 			setMessageText("");
-	},[messageText]);
+	},[messageText,chatId]);
 
 	return (
 		<SafeAreaView
@@ -47,7 +66,15 @@ const ChatScreen = props => {
 			keyboardVerticalOffset={100}
 			behavior={Platform.OS==="ios"?"padding":undefined}>
 			<ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-					
+
+				<PageContainer style={{backgroundColor:'transparent'}}>
+					{
+						!chatId && <Bubble text="This is a new chat say hi!" type="system"/>
+					}
+				
+				</PageContainer>		
+
+
 			</ImageBackground>	
 			<View style={styles.inputContainer}>
 				<TouchableOpacity style={styles.mediaButton} onPress={()=>{console.log('pressed')}}>
