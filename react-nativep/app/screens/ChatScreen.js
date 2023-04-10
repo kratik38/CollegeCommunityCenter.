@@ -7,19 +7,20 @@ import colors from '../constants/colors';
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
 import Bubble from '../components/Bubble';
-import { createChat } from '../utils/actions/chatActions';
+import { createChat , sendTextMessage } from '../utils/actions/chatActions';
 
 const ChatScreen = props => {
 
 	const userData = useSelector(state=>state.auth.userData);
 	const storedUsers = useSelector(state=>state.users.storedUsers);
+	const storedChats = useSelector(state=>state.chats.chatsData);
 
 
 	const [chatUsers,setChatUsers] = useState([]);
 	const [messageText,setMessageText] = useState("");
 	const [chatId,setChatId] = useState(props.route?.params?.chatId);
 
-	const chatData = props.route?.params?.newChatData;
+	const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
 	const getChatTitleFromName = ()=>{
 		const otherUserId = chatUsers.find(uid=>uid!==userData.userId);
@@ -48,9 +49,11 @@ const ChatScreen = props => {
 				id = await createChat(userData.userId, props.route.params.newChatData);
 				setChatId(id);
 			}
+
+			await sendTextMessage(chatId, userData.userId, messageText);
 			
 		} catch (error) {
-			
+			console.log(error);
 		}
 
 			
@@ -73,7 +76,6 @@ const ChatScreen = props => {
 					}
 				
 				</PageContainer>		
-
 
 			</ImageBackground>	
 			<View style={styles.inputContainer}>
@@ -120,8 +122,6 @@ textBox:{
 	flex:1,
 	borderWidth:1,
 	borderRadius:15,
-	justifyContent:'center',
-	alignItems:'center',
 	borderColor:colors.lightGrey,
 	marginHorizontal:15,
 	paddingHorizontal:12,		
@@ -135,8 +135,7 @@ sendButton:{
 	backgroundColor:colors.blue,
 	borderRadius:50,
 	padding:8,
-	width:35,
-
 }
 });
+
 export default ChatScreen;

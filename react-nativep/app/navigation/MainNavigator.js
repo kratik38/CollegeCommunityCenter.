@@ -11,8 +11,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NewChatScreen from '../screens/NewChatScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFirebaseApp } from '../utils/firebaseHelper';
-import { child, getDatabase, off, onValue, ref } from 'firebase/database';
+import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { setChatsData } from '../store/chatSlice';
+import { setStoredUsers } from '../store/userSlice';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -74,6 +75,7 @@ const MainNavigator = ()=>{
   const userData = useSelector(state=>state.auth.userData);
   const storedUsers = useSelector(state=>state.users.storedUsers);
 
+
   useEffect(()=>{
 
     console.log("subscribing to firebase listeners");
@@ -104,6 +106,20 @@ const MainNavigator = ()=>{
 
           if(data){
             data.key = chatSnapshot.key;
+
+            data.users.forEach(userId=>{
+              if(storedUsers[userId]) return;
+
+              const userRef = child(dbRef,`users/${userId}`);
+
+              get(userRef).then((userSnapShot)=>{
+                  const userSnapShotData = userSnapShot.val();
+                  dispatch(setStoredUsers({newUsers:{userSnapShotData}})); 
+              });
+
+              refs.push(userRef);
+
+            })
 
             chatsData[chatSnapshot.key] = data;
           }
