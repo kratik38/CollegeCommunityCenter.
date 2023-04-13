@@ -1,24 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const messagesSlice = createSlice({
-	name:"messages",
-	initialState:{
-		messagesData:{}
-	},
-	reducers:{
-		setChatMessages:(state,action)=>{
-			const existingMessages = state.messagesData;
 
-			const { chatId,messagesData } = action.payload;
+    name: "messages",
+    initialState: {
+        messagesData: {}
+    },
+    reducers: {
+        setChatMessages: (state, action) => {
+            const existingMessages = state.messagesData;
 
-			existingMessages[chatId] = messagesData;
+            const { chatId, messagesData } = action.payload;
 
-			state.messagesData = existingMessages;
-		
-		}
-	}
+            existingMessages[chatId] = messagesData;
 
-})
-
+            state.messagesData = existingMessages;
+        }
+    }
+});
 export const setChatMessages = messagesSlice.actions.setChatMessages;
-export default messagesSlice.reducer; 
+export default messagesSlice.reducer;

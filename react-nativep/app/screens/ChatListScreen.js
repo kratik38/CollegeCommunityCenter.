@@ -52,7 +52,7 @@ const ChatListScreen = props => {
 
 	return <PageContainer>
 
-				<PageTitle text={"Chats"}/>
+				<PageTitle text="Chats"/>
 				
 				<FlatList 
 	        data = {userChats}
@@ -67,7 +67,9 @@ const ChatListScreen = props => {
 						if(!otherUser) return;
 
 						const title = `${otherUser.firstName} ${otherUser.lastName}`;
-						const subTitle = chatData.latestMessageText || "New Chat";
+
+						const subTitle = chatData.latestMessageText || "New chat";
+
 						const image = otherUser.profilePicture;
 
 						return <DataItem 

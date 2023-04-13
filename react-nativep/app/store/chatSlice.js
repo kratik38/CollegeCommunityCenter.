@@ -9,6 +9,7 @@ const chatSlice = createSlice({
 		setChatsData:(state,action)=>{
 		
 			state.chatsData = { ...action.payload.chatsData }; 
+
 		}
 	}
 

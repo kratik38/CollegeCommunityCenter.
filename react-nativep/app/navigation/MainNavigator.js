@@ -72,7 +72,7 @@ const StackNavigator = ()=>{
   )
 }
 
-const MainNavigator = ()=>{
+const MainNavigator = (props)=>{
   
   const dispatch = useDispatch();
 
@@ -121,7 +121,7 @@ const MainNavigator = ()=>{
               get(userRef).then((userSnapShot)=>{
                   const userSnapShotData = userSnapShot.val();
                   dispatch(setStoredUsers({newUsers:{userSnapShotData}})); 
-              });
+              })
 
               refs.push(userRef);
 
@@ -132,6 +132,7 @@ const MainNavigator = ()=>{
 
           if(chatsFoundCount >= chatIds.length){
             dispatch(setChatsData({ chatsData }));
+            setIsLoading(false);
           }
           
         })
@@ -148,8 +149,6 @@ const MainNavigator = ()=>{
           setIsLoading(false);
         }
       }
-
-      console.log(chatIds);
        
     })
 

@@ -1,5 +1,5 @@
 import React,{ useCallback, useEffect, useState } from 'react';
-import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform, } from 'react-native';
+import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform, FlatList, Text, } from 'react-native';
 import backgroundImage from '../assets/image/droplet.jpeg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -9,23 +9,45 @@ import PageContainer from '../components/PageContainer';
 import Bubble from '../components/Bubble';
 import { createChat , sendTextMessage } from '../utils/actions/chatActions';
 
-const ChatScreen = props => {
-
-	const userData = useSelector(state=>state.auth.userData);
-	const storedUsers = useSelector(state=>state.users.storedUsers);
-	const storedChats = useSelector(state=>state.chats.chatsData);
-	const chatMessages = useSelector(state=>state.messages.messagesData);
-	
-	console.log(chatMessages);
+const ChatScreen = (props) => {
 
 	const [chatUsers,setChatUsers] = useState([]);
 	const [messageText,setMessageText] = useState("");
 	const [chatId,setChatId] = useState(props.route?.params?.chatId);
+	const [errorBannerText,setErrorBannerText] = useState("");
+
+	const userData = useSelector(state=>state.auth.userData);
+	const storedUsers = useSelector(state=>state.users.storedUsers);
+	const storedChats = useSelector(state=>state.chats.chatsData);
+
+	const chatMessages = useSelector(state=>{
+
+		if(!chatId) return [];
+
+			const chatMessageData = state.messages.messagesData[chatId];
+
+			if(!chatMessageData) return [];
+
+			const messageList = [];
+			
+
+			for(const key in chatMessageData){
+				const message = chatMessageData[key];
+
+				messageList.push({
+					key,
+					...message
+				});
+			}
+
+			return messageList;
+	
+	});
 
 	const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
 	const getChatTitleFromName = ()=>{
-		const otherUserId = chatUsers.find(uid=>uid!==userData.userId);
+		const otherUserId = chatUsers.find(uid=>uid !== userData.userId);
 		const otherUserData = storedUsers[otherUserId];
 
 		return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
@@ -53,9 +75,12 @@ const ChatScreen = props => {
 			}
 
 			await sendTextMessage(chatId, userData.userId, messageText);
-			
+
+			setMessageText("");
 		} catch (error) {
 			console.log(error);
+			setErrorBannerText("Message failed To send");
+			setTimeout(()=>setErrorBannerText(""),5000);
 		}
 
 			
@@ -76,7 +101,29 @@ const ChatScreen = props => {
 					{
 						!chatId && <Bubble text="This is a new chat say hi!" type="system"/>
 					}
-				
+					{
+						errorBannerText !=="" && <Bubble text={errorBannerText} type="error"/>	
+					}
+
+				{	
+					chatId &&
+					<FlatList 
+					  data={chatMessages}
+						renderItem = {(itemData)=>{
+							const message = itemData.item;
+
+							const isOwnMessage = message.sendBy === userData.userId;
+
+							const messageType = isOwnMessage ? "myMessage" : "theirMessage";
+
+
+							return <Bubble 
+											type={messageType}
+											text={message.text}
+											/>
+						}}
+					/>
+        }
 				</PageContainer>		
 
 			</ImageBackground>	
@@ -84,19 +131,20 @@ const ChatScreen = props => {
 				<TouchableOpacity style={styles.mediaButton} onPress={()=>{console.log('pressed')}}>
 				 <Feather name="plus" size={24} color={colors.blue}/>	
 				</TouchableOpacity>
-				<TextInput style={styles.textBox} value={messageText} onSubmitEditing={sendMessage} onChangeText={text=> setMessageText(text)}/>
+				<TextInput style={styles.textBox} value={messageText} onChangeText={text=> setMessageText(text)}
+				onSubmitEditing={sendMessage}/>
 				{
-					messageText==="" &&
+					messageText==="" && (
 					<TouchableOpacity style={styles.mediaButton} onPress={()=>{console.log('Pressed')}}>
 						<Feather name="camera" size={24} color={colors.blue}/>
 					</TouchableOpacity>
-				}
+				)}
 				{
 					messageText!=="" &&
-					<TouchableOpacity style={{...styles.mediaButton,...styles.sendButton}} onPress={sendMessage}>
+					(<TouchableOpacity style={{...styles.mediaButton,...styles.sendButton}} onPress={sendMessage}>
 						<Feather name="send"  size={20} color='white'/>
 					</TouchableOpacity>
-				}
+				)}
 			</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
