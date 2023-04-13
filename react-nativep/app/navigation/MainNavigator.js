@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,10 @@ import { getFirebaseApp } from '../utils/firebaseHelper';
 import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { setChatsData } from '../store/chatSlice';
 import { setStoredUsers } from '../store/userSlice';
+import { ActivityIndicator, View } from 'react-native';
+import commonStyles from '../constants/commonStyles';
+import colors from '../constants/colors';
+import { setChatMessages } from '../store/messagesSlice';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -68,9 +72,11 @@ const StackNavigator = ()=>{
   )
 }
 
-const MainNavigator = ()=>{
+const MainNavigator = (props)=>{
   
   const dispatch = useDispatch();
+
+  const [isLoading,setIsLoading] = useState(true);
   
   const userData = useSelector(state=>state.auth.userData);
   const storedUsers = useSelector(state=>state.users.storedUsers);
@@ -115,7 +121,7 @@ const MainNavigator = ()=>{
               get(userRef).then((userSnapShot)=>{
                   const userSnapShotData = userSnapShot.val();
                   dispatch(setStoredUsers({newUsers:{userSnapShotData}})); 
-              });
+              })
 
               refs.push(userRef);
 
@@ -126,13 +132,23 @@ const MainNavigator = ()=>{
 
           if(chatsFoundCount >= chatIds.length){
             dispatch(setChatsData({ chatsData }));
+            setIsLoading(false);
           }
           
         })
-        
-      }
 
-      console.log(chatIds);
+        const messagesRef = child(dbRef,`messages/${chatId}`);
+        refs.push(messagesRef);
+
+        onValue(messagesRef,messagesSnapshot=>{
+          const messagesData = messagesSnapshot.val();
+          dispatch(setChatMessages({ chatId , messagesData }));  
+        })
+       
+        if(chatsFoundCount == 0){
+          setIsLoading(false);
+        }
+      }
        
     })
 
@@ -144,6 +160,11 @@ const MainNavigator = ()=>{
 
   },[])
 
+  if(isLoading){
+    <View style={commonStyles.center}>
+       <ActivityIndicator size={'large'} color={colors.primary}/>
+    </View>
+  }
 	return (
     <StackNavigator/>
 	)
