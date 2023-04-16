@@ -9,6 +9,7 @@ import PageContainer from '../components/PageContainer';
 import Bubble from '../components/Bubble';
 import { createChat , sendTextMessage } from '../utils/actions/chatActions';
 
+
 const ChatScreen = (props) => {
 
 	const [chatUsers,setChatUsers] = useState([]);
@@ -111,14 +112,17 @@ const ChatScreen = (props) => {
 						renderItem = {(itemData)=>{
 							const message = itemData.item;
 
-							const isOwnMessage = message.sendBy === userData.userId;
+							const isOwnMessage = message.sentBy === userData.userId;
 
 							const messageType = isOwnMessage ? "myMessage" : "theirMessage";
-
 
 							return <Bubble 
 											type={messageType}
 											text={message.text}
+											messageId={message.key}
+											userId={userData.userId}
+											chatId={chatId}
+											date={message.sentAt}
 											/>
 						}}
 					/>

@@ -18,6 +18,7 @@ import { ActivityIndicator, View } from 'react-native';
 import commonStyles from '../constants/commonStyles';
 import colors from '../constants/colors';
 import { setChatMessages } from '../store/messagesSlice';
+import { setStarredMessages } from '../store/messagesSlice';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -152,6 +153,12 @@ const MainNavigator = (props)=>{
        
     })
 
+    const userStarredMessagesRef = child(dbRef,`userStarredMessages/${userData.userId}`);
+    refs.push(userStarredMessagesRef);
+    onValue(userStarredMessagesRef,querySnapshot=>{
+       const starredMessages = querySnapshot.val() ?? {}; 
+       dispatch(setStarredMessages({ starredMessages }));
+    })
 
     return ()=>{
       console.log("unsubscribing firebase listener");
