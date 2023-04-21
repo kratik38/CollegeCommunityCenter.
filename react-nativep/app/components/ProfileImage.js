@@ -7,7 +7,6 @@ import { launchImagePicker, uploadImageAsync } from "../utils/imagePickerHelper"
 import { updateSignedInUserData } from "../utils/actions/authActions";
 import { useDispatch } from "react-redux";
 import { updateLoggedInUserData } from "../store/authSlice";
-<FontAwesome name="pencil" size={24} color="black" />
 
 const ProfileImage = props =>{
 	const dispatch = useDispatch();
@@ -17,6 +16,7 @@ const ProfileImage = props =>{
 	const [isLoading,setIsLoading] = useState(false);
 	
 	const showEditButton = props.showEditButton && props.showEditButton===true;
+	const showRemoveButton = props.showRemoveButton && props.showRemoveButton===true;
 
 	const userId = props.userId;
 
@@ -48,13 +48,12 @@ const ProfileImage = props =>{
 			setIsLoading(false);
 
 		 }
-		
 		}
 
-		const Container = showEditButton ? TouchableOpacity : View ;
+		const Container = props.onPress || showEditButton ? TouchableOpacity : View ;
 
 	return (
-				 <Container onPress={pickImage}>
+				 <Container style={props.style} onPress={props.onPress || pickImage}>
 					{
 						 isLoading?
 						 <View height={props.size} width={props.size} style={styles.loadingContainer}>
@@ -69,6 +68,12 @@ const ProfileImage = props =>{
 						 showEditButton && !isLoading &&
 							<View style={styles.editIconContainer}>
 								<FontAwesome name="pencil" size={15} color="black" />	
+							</View>
+					}
+					{
+						 showRemoveButton && !isLoading &&
+							<View style={styles.removeIconContainer}>
+								<FontAwesome name="close" size={15} color="black" />	
 							</View>
 					}
 				 </Container>
@@ -93,6 +98,14 @@ const styles = StyleSheet.create({
 	loadingContainer:{
 		justifyContent:'center',
 		alignItems:'center'
+	},
+	removeIconContainer:{
+		position:'absolute',
+		bottom:-3,
+		right:-3,
+		backgroundColor:colors.lightGrey,
+		borderRadius:20,
+		padding:3
 	}
 })
 
