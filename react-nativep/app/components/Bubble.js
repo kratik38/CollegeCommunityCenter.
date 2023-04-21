@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "../constants/colors";
 import { Menu,MenuTrigger,MenuOptions,MenuOption } from "react-native-popup-menu";
 import uuid from 'react-native-uuid';
@@ -37,7 +37,7 @@ const Bubble = props =>{
 	 const menuRef = useRef(null);
 	 const id = useRef(uuid.v4());
 
-	 const { text,type,messageId,chatId,userId,date,setReply,replyingTo,name } = props;
+	 const { text,type,messageId,chatId,userId,date,setReply,replyingTo,name,imageUrl } = props;
 
 	 const starredMessages = useSelector(state=>state.messages.starredMessages[chatId] ?? {});
 	 const storedUsers  = useSelector(state=>state.users.storedUsers);
@@ -109,9 +109,15 @@ const Bubble = props =>{
 					name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
 					/>
       }
+			{ !imageUrl &&
 				<Text style={textStyle} >
 					{text}
 				</Text>
+      }
+			{
+				imageUrl &&
+				<Image source={{url:imageUrl }} style={styles.image}/>
+			}
 				
 			{
 				dateString &&
@@ -180,6 +186,11 @@ const styles = StyleSheet.create({
 	name:{
 		 fontFamily:'medium',
 		 letterSpacing:0.3
+	},
+	image:{
+		height:300,
+		width:300,
+		marginBottom:5
 	}
 });
 
