@@ -1,6 +1,6 @@
 import React,{ useCallback, useEffect, useRef, useState } from 'react';
 import { View,TextInput,StyleSheet,ImageBackground, TouchableOpacity,KeyboardAvoidingView, Platform, FlatList, Text, Image, ActivityIndicator, } from 'react-native';
-import backgroundImage from '../assets/image/droplet.jpeg';
+import backgroundImage from '../assets/images/droplet.jpeg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import colors from '../constants/colors';
@@ -27,9 +27,7 @@ const ChatScreen = (props) => {
 	const userData = useSelector(state=>state.auth.userData);
 	const storedUsers = useSelector(state=>state.users.storedUsers);
 	const storedChats = useSelector(state=>state.chats.chatsData);
-
 	const chatMessages = useSelector(state=>{
-
 		if(!chatId) return [];
 
 			const chatMessageData = state.messages.messagesData[chatId];
@@ -37,7 +35,6 @@ const ChatScreen = (props) => {
 			if(!chatMessageData) return [];
 
 			const messageList = [];
-			
 
 			for(const key in chatMessageData){
 				const message = chatMessageData[key];
@@ -61,12 +58,12 @@ const ChatScreen = (props) => {
 		return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
 	}
 
+	const title = chatData.chatName ?? getChatTitleFromName();
+	console.log(chatData);
 	useEffect(()=>{
-
 		props.navigation.setOptions({
-			headerTitle:getChatTitleFromName()
+			headerTitle: title
 		})
-
 		setChatUsers(chatData.users);
 	},[chatUsers]);
 
@@ -82,7 +79,7 @@ const ChatScreen = (props) => {
 				setChatId(id);
 			}
 
-			await sendTextMessage(chatId, userData.userId, messageText,replyingTo && replyingTo.key);
+			await sendTextMessage(id, userData.userId, messageText,replyingTo && replyingTo.key);
 
 			setMessageText("");
 			setReplyingTo(null);
@@ -149,9 +146,7 @@ const ChatScreen = (props) => {
 		 edges = {['right','left','bottom']}
 		 style={styles.container}
 		>
-			<KeyboardAvoidingView style={styles.screen}
-			keyboardVerticalOffset={100}
-			behavior={Platform.OS==="ios"?"padding":undefined}>
+			
 			<ImageBackground source={backgroundImage} style={styles.backgroundImage}>
 
 				<PageContainer style={{backgroundColor:'transparent'}}>
@@ -164,7 +159,7 @@ const ChatScreen = (props) => {
 
 				{	
 					chatId &&
-					<FlatList 
+					<FlatList
 						ref={(ref)=> flatList.current = ref}
 						onContentSizeChange={()=> flatList.current.scrollToEnd({animated:false})}
 						onLayout={()=> flatList.current.scrollToEnd({animated:false})}
@@ -176,6 +171,9 @@ const ChatScreen = (props) => {
 
 							const messageType = isOwnMessage ? "myMessage" : "theirMessage";
 
+							const sender = message.sentBy && storedUsers[message.sentBy];
+							const name = sender && `${sender.firstName} ${sender.lastName}`;
+
 							return <Bubble 
 											type={messageType}
 											text={message.text}
@@ -183,6 +181,7 @@ const ChatScreen = (props) => {
 											userId={userData.userId}
 											chatId={chatId}
 											date={message.sentAt}
+											name={!chatData || isOwnMessage ? undefined : name}
 											setReply={()=>{setReplyingTo(message)}}
 											replyingTo = {message.replyTo && chatMessages.find(i=>i.key===message.replyTo)}
 											imageUrl={message.imageUrl}
@@ -252,7 +251,6 @@ const ChatScreen = (props) => {
 				 )}
 				 />
 			</View>
-			</KeyboardAvoidingView>
 		</SafeAreaView>
 	)
 }

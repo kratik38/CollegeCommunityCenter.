@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View,Text,StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View,Text,StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView,Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PageContainer from '../components/PageContainer';
 import SignUpForm from '../components/SignUpForm';
 import SignInForm from '../components/SignInForm';
 
-import logo from '../assets/image/logo.png'; 
+import logo from '../assets/images/logo.png'; 
 
 const AuthScreen = props => {
 	const [isSignUp,setIsSignUp] = useState(false);
