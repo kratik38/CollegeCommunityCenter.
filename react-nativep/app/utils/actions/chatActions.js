@@ -26,12 +26,17 @@ export const createChat = async (loggedInUserId,chatData)=>{
 
 export const sendTextMessage = async (chatId,senderId,messageText, replyTo)=>{
 
-	await sendMessage(chatId,senderId,messageText,null,replyTo);	
+	await sendMessage(chatId,senderId,messageText,null,replyTo,null);	
+}
+
+export const sendInfoMessage = async (chatId,senderId,messageText)=>{
+
+	await sendMessage(chatId,senderId,messageText,null,null,"info");	
 }
 
 export const sendImage = async (chatId,senderId,imageUrl, replyTo)=>{
 
-	await sendMessage(chatId,senderId,'Image',imageUrl,replyTo);	
+	await sendMessage(chatId,senderId,'Image',imageUrl,replyTo,null);	
 }
 
 export const updateChatData = async (chatId, userId, chatData)=>{
@@ -48,7 +53,7 @@ export const updateChatData = async (chatId, userId, chatData)=>{
 }
 
 
-export const sendMessage = async (chatId,senderId,messageText,imageUrl, replyTo)=>{
+export const sendMessage = async (chatId,senderId,messageText,imageUrl, replyTo,type)=>{
 
 	const app = getFirebaseApp();
 	const dbRef = ref(getDatabase(app));
@@ -66,6 +71,10 @@ export const sendMessage = async (chatId,senderId,messageText,imageUrl, replyTo)
 
 	if(imageUrl){
 		messageData.imageUrl = imageUrl;
+	}
+
+	if(type){
+		messageData.type = type;
 	}
 
 	await push(messageRef,messageData);
@@ -123,4 +132,10 @@ export const removeUserFromChat = async (userLoggedInData,userToRemoveData,chatD
 						break;
 				}
 		 }
+		 
+		 const messageText = userLoggedInData.userId === userToRemoveData.userId ?
+		 	`${userLoggedInData.firstName} left the chat`:
+		  `${userLoggedInData.firstName} removed ${userToRemoveData.firstName} from the chat`; 
+		 
+		 await sendInfoMessage(chatData.key,userLoggedInData.userId,messageText);
 }
