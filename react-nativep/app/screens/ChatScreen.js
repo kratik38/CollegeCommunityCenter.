@@ -11,6 +11,8 @@ import { createChat , sendImage, sendTextMessage } from '../utils/actions/chatAc
 import ReplyTo from '../components/ReplyTo';
 import { launchImagePicker, openCamera, uploadImageAsync } from '../utils/imagePickerHelper';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import CustomHeaderButton from '../components/CustomHeaderButton';
 
 const ChatScreen = (props) => {
 
@@ -62,7 +64,21 @@ const ChatScreen = (props) => {
 	console.log(chatData);
 	useEffect(()=>{
 		props.navigation.setOptions({
-			headerTitle: title
+			headerTitle: title,
+			headerRight: ()=>{
+				return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+					{
+						chatId &&
+						<Item 
+						 title="Chat Settings"
+						 iconName="settings-outline"
+						 onPress={()=> chatData.isGroupChat ?
+						        props.navigation.navigate(""):
+									  props.navigation.navigate("Contact",{uid : chatUsers.find(uid=>uid !== userData.userId)})} 
+						 />
+					}
+				</HeaderButtons>
+			}
 		})
 		setChatUsers(chatData.users);
 	},[chatUsers]);

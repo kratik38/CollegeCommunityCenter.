@@ -19,6 +19,7 @@ import commonStyles from '../constants/commonStyles';
 import colors from '../constants/colors';
 import { setChatMessages } from '../store/messagesSlice';
 import { setStarredMessages } from '../store/messagesSlice';
+import ContactScreen from '../screens/ContactScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -61,6 +62,11 @@ const StackNavigator = ()=>{
 					gestureEnabled:'true',
 					headerTitle:'Settings',
           headerBackTitle:'Back',
+				}}/>
+				<Stack.Screen name="Contact" component={ContactScreen} options={{
+					gestureEnabled:'true',
+					headerTitle:'Contact Info',
+          headerBackTitle:'Back'
 				}}/>
         </Stack.Group>
 
