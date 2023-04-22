@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileImage from '../components/ProfileImage';
+import ProfileImage from './ProfileImage';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 		borderWidth:1,
 		borderRadius:50,
 		borderColor:colors.lightGrey,
-		backgroundColor:'white',
+		backgroundColor:'white'
 	},
 	checkedStyle:{
 		backgroundColor:colors.primary,

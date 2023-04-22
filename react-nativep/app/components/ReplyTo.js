@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 		},
 		name:{
 			color:colors.blue,
-			fontFamily:'regular',
+			fontFamily:'medium',
 			letterSpacing:0.3
 		}
 });

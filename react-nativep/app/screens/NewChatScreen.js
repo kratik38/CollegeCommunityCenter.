@@ -47,8 +47,12 @@ const NewChatScreen = props => {
 						title="Create"
 						disabled={isGroupChatDisabled}
 						color={isGroupChatDisabled? colors.lightGrey:undefined}
-						onPress={()=>{}}/>
-
+						onPress={()=>{
+							 props.navigation.navigate("ChatList",{
+								 selectedUsers,
+								 chatName
+							 })
+						}}/>
 					}
 					</HeaderButtons>
 				},
@@ -112,7 +116,6 @@ const NewChatScreen = props => {
 					 style={styles.textBox}
 					 placeholder='Enter a name for your chat'
 					 autoCorrect={false}
-					 autoComplete={false}
 					 onChangeText={text=> setChatName(text)}
 					/>
 				</View>
@@ -123,8 +126,7 @@ const NewChatScreen = props => {
 				   style={styles.selectedUsersList}
 					 contentContainerStyle={{alignItems:'center'}}
 					 ref={ref => selectedUsersFlatList.current = ref}
-					 //bug auto scrolltoend is not working right now 
-					 onContentSizeChange={() =>{}}
+					 onContentSizeChange={() => selectedUsersFlatList.current.scrollToEnd()}
 					 data={selectedUsers}
 					 horizontal={true}
 					 keyExtractor={item=>item}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Image,StyleSheet,TouchableOpacity,View } from "react-native";
-import userImage from '../assets/image/userImage.jpeg';
+import userImage from '../assets/images/userImage.jpeg';
 import colors from "../constants/colors";
 import { FontAwesome } from '@expo/vector-icons';
 import { launchImagePicker, uploadImageAsync } from "../utils/imagePickerHelper";
@@ -95,10 +95,6 @@ const styles = StyleSheet.create({
 		borderRadius:20,
 		padding:8
 	},
-	loadingContainer:{
-		justifyContent:'center',
-		alignItems:'center'
-	},
 	removeIconContainer:{
 		position:'absolute',
 		bottom:-3,
@@ -106,6 +102,10 @@ const styles = StyleSheet.create({
 		backgroundColor:colors.lightGrey,
 		borderRadius:20,
 		padding:3
+	},
+	loadingContainer:{
+		justifyContent:'center',
+		alignItems:'center'
 	}
 })
 

@@ -12,6 +12,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 
 SplashScreen.preventAutoHideAsync();
 // AsyncStorage.clear();
+// react native old is version is used to tackel the errors because of newer version
 
 export default function App() {
 

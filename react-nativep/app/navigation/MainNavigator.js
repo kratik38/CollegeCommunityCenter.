@@ -14,7 +14,7 @@ import { getFirebaseApp } from '../utils/firebaseHelper';
 import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { setChatsData } from '../store/chatSlice';
 import { setStoredUsers } from '../store/userSlice';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from 'react-native';
 import commonStyles from '../constants/commonStyles';
 import colors from '../constants/colors';
 import { setChatMessages } from '../store/messagesSlice';
@@ -173,7 +173,10 @@ const MainNavigator = (props)=>{
     </View>
   }
 	return (
-    <StackNavigator/>
+    <KeyboardAvoidingView style={{flex:1}}
+			behavior={Platform.OS==="ios"?"padding":undefined}>
+        <StackNavigator/>
+      </KeyboardAvoidingView>
 	)
 }
 

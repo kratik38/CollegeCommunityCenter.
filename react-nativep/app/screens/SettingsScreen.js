@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View,ScrollView } from 'react-native';
 import PageTitle from '../components/PageTitle';
 import PageContainer from '../components/PageContainer';
 import Input from '../components/Input';
@@ -12,7 +12,7 @@ import SubmitButton from '../components/SubmitButton';
 import { updateSignedInUserData, userLogout } from '../utils/actions/authActions';
 import { updateLoggedInUserData } from '../store/authSlice';
 import ProfileImage from '../components/ProfileImage';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
 
 
 const SettingsScreen = props => {
