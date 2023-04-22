@@ -20,6 +20,7 @@ import colors from '../constants/colors';
 import { setChatMessages } from '../store/messagesSlice';
 import { setStarredMessages } from '../store/messagesSlice';
 import ContactScreen from '../screens/ContactScreen';
+import DataListScreen from '../screens/DataListScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -64,6 +65,10 @@ const StackNavigator = ()=>{
 				}}/>
 				<Stack.Screen name="Contact" component={ContactScreen} options={{
 					headerTitle:'Contact Info',
+          headerBackTitle:'Back'
+				}}/>
+				<Stack.Screen name="DataList" component={DataListScreen} options={{
+					headerTitle:'',
           headerBackTitle:'Back'
 				}}/>
         </Stack.Group>

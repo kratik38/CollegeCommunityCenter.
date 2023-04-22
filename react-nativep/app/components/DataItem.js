@@ -3,7 +3,6 @@ import ProfileImage from './ProfileImage';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "../constants/colors";
 import { Ionicons,AntDesign } from "@expo/vector-icons";
-import { checkPluginState } from "react-native-reanimated/lib/reanimated2/core";
 
 const imageSize = 40;
 
@@ -11,11 +10,13 @@ const DataItem = props =>{
 
 	const { title,subTitle,image,type,isChecked ,icon} = props;	
 
+	const hideImage = props.hideImage && props.hideImage===true;
+
 	return <TouchableWithoutFeedback onPress={props.onPress}>
 		 <View style={styles.container}>
 
 				{
-					!icon && 
+					!icon && !hideImage &&
 		      <ProfileImage 
 					 uri={image}
 					 size={imageSize}/>
