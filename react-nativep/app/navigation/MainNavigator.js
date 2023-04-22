@@ -55,16 +55,14 @@ const StackNavigator = ()=>{
 				<Stack.Screen name="Home" component={TabNavigator} options={{ headerShown:false }}/>
 				<Stack.Screen name="ChatScreen" component={ChatScreen} options={{
           headerTitle:'',
-					gestureEnabled:'true',
           headerBackTitle:'Back',
 				}}/>
 				<Stack.Screen name="ChatSettings" component={ChatSettingsScreen} options={{
-					gestureEnabled:'true',
-					headerTitle:'Settings',
+					headerTitle:'',
           headerBackTitle:'Back',
+          headerShadowVisible: false
 				}}/>
 				<Stack.Screen name="Contact" component={ContactScreen} options={{
-					gestureEnabled:'true',
 					headerTitle:'Contact Info',
           headerBackTitle:'Back'
 				}}/>

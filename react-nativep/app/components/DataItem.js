@@ -2,30 +2,44 @@ import React from "react";
 import ProfileImage from './ProfileImage';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "../constants/colors";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,AntDesign } from "@expo/vector-icons";
+import { checkPluginState } from "react-native-reanimated/lib/reanimated2/core";
+
+const imageSize = 40;
 
 const DataItem = props =>{
 
-	const { title,subTitle,image,type,isChecked } = props;	
+	const { title,subTitle,image,type,isChecked ,icon} = props;	
 
 	return <TouchableWithoutFeedback onPress={props.onPress}>
 		 <View style={styles.container}>
+
+				{
+					!icon && 
 		      <ProfileImage 
 					 uri={image}
-					 size={40}/>
-
+					 size={imageSize}/>
+				}	
+				{
+					icon &&
+					<View style={styles.leftIconContainer}>
+						<AntDesign name={icon} size={20} color={colors.blue}/>
+						</View>	
+				}
 				<View style={styles.textContainer}>
 
-					<Text
-						numberOfLines={1}
-					  style={styles.title}>
-						{title}
-					</Text>
-					<Text 
-					 style={styles.subTitle}>
-					 {subTitle}
-					</Text>
-
+						<Text
+							numberOfLines={1}
+							style={{... styles.title,...{color:type==="button" ? colors.blue : colors.textColor}}}>
+							{title}
+						</Text>
+					{
+					subTitle &&
+						<Text 
+							style={styles.subTitle}>
+							{subTitle}
+						</Text>
+					}
 				</View> 
 
 				{
@@ -40,6 +54,7 @@ const DataItem = props =>{
 						<Ionicons name="chevron-forward-outline" size={18} color={colors.grey}/>
 					</View>
 				}
+
 
 		 </View>
 	</TouchableWithoutFeedback>
@@ -78,6 +93,14 @@ const styles = StyleSheet.create({
 	checkedStyle:{
 		backgroundColor:colors.primary,
 		borderColor:'transparent'
+	},
+	leftIconContainer:{
+		backgroundColor:colors.extraLightGrey,
+		borderRadius:50,
+		alignItems:'center',
+		justifyContent:'center',
+		width:imageSize,
+		height:imageSize
 	}
 });
 
