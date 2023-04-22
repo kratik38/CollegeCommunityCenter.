@@ -1,5 +1,6 @@
 import { getFirebaseApp } from '../firebaseHelper';
 import { ref,child,push,getDatabase, update, get, set, remove } from 'firebase/database';
+import { deleteUserChat, getUserChats } from './userActions';
 
 export const createChat = async (loggedInUserId,chatData)=>{
 
@@ -31,6 +32,19 @@ export const sendTextMessage = async (chatId,senderId,messageText, replyTo)=>{
 export const sendImage = async (chatId,senderId,imageUrl, replyTo)=>{
 
 	await sendMessage(chatId,senderId,'Image',imageUrl,replyTo);	
+}
+
+export const updateChatData = async (chatId, userId, chatData)=>{
+		const app = getFirebaseApp();
+		const dbRef = ref(getDatabase(app));
+		const chatRef = child(dbRef,`chats/${chatId}`);
+
+		await update(chatRef,{
+			...chatData,
+			updatedAt:new Date().toISOString(),
+			updatedBy:userId
+		})
+		
 }
 
 
@@ -91,4 +105,22 @@ try {
 	} catch (error) {
 		console.log(error);	
 	}
+}
+
+export const removeUserFromChat = async (userLoggedInData,userToRemoveData,chatData)=>{
+	   const userToRemoveId = userToRemoveData.userId;
+
+		 const newUsers = chatData.users.filter(uid=>uid!==userToRemoveId);
+		 await updateChatData(chatData.key,userLoggedInData.userId,{ users: newUsers });
+		 
+		 const userChats = await getUserChats(userToRemoveId);
+
+		 for(const key in userChats){
+				const currentChatId = userChats[key];
+
+				if(currentChatId===chatData.key){
+					await deleteUserChat(userToRemoveId,key);
+						break;
+				}
+		 }
 }
