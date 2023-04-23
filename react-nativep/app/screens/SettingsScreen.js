@@ -160,7 +160,7 @@ const SettingsScreen = props => {
 							<SubmitButton 
 							title="Log Out" 
 							style={{marginTop:20}}
-							onPress={()=>{dispatch(userLogout())}}
+							onPress={()=>{dispatch(userLogout(userData))}}
 							color={colors.red}/> 
 							
 						 </ScrollView>					
