@@ -173,10 +173,10 @@ const ChatSettingsScreen = props => {
 
 
             <DataItem 
-             title="Starred Messages"
+             title="Weekly Notice Board"
              type="link"
              hideImage={true}
-             onPress={()=>props.navigation.navigate("DataList",{title:"Starred Messages",data: Object.values(starredMessages), type:"messages"})}
+             onPress={()=>props.navigation.navigate("DataList",{title:"Weekly Notice Board",data: Object.values(starredMessages), type:"messages"})}
              />
 
         </ScrollView>

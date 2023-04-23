@@ -3,6 +3,8 @@ import { ref,child,push,getDatabase, update, get, set, remove } from 'firebase/d
 import { addUserChat, deleteUserChat, getUserChats } from './userActions';
 
 export const createChat = async (loggedInUserId,chatData)=>{
+	
+	if(chatData.chatName===undefined) chatData.chatName = "";{/* added after */}
 
 	const newChatData = {
 		...chatData,

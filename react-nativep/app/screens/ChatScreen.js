@@ -64,7 +64,7 @@ const ChatScreen = (props) => {
 		if(!chatData) return;
 
 		props.navigation.setOptions({
-			headerTitle: chatData.chatName ?? getChatTitleFromName(),
+			headerTitle: chatData.chatName!=="" ? chatData.chatName : getChatTitleFromName(),
 			headerRight: ()=>{
 				return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 					{
