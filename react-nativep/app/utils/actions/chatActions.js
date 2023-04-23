@@ -1,6 +1,6 @@
 import { getFirebaseApp } from '../firebaseHelper';
 import { ref,child,push,getDatabase, update, get, set, remove } from 'firebase/database';
-import { deleteUserChat, getUserChats } from './userActions';
+import { addUserChat, deleteUserChat, getUserChats } from './userActions';
 
 export const createChat = async (loggedInUserId,chatData)=>{
 
@@ -138,4 +138,33 @@ export const removeUserFromChat = async (userLoggedInData,userToRemoveData,chatD
 		  `${userLoggedInData.firstName} removed ${userToRemoveData.firstName} from the chat`; 
 		 
 		 await sendInfoMessage(chatData.key,userLoggedInData.userId,messageText);
+}
+
+export const addUsersToChat = async (userLoggedInData,userToAddData,chatData)=>{
+
+	const existingUsers = Object.values(chatData.users);
+	const newUsers = [];
+
+	let UserAddedName = '';
+
+	userToAddData.forEach(async userToAdd => {
+			const userToAddId = userToAdd.userId;
+
+			if(existingUsers.includes(userToAddId)) return;
+
+			newUsers.push(userToAddId);
+
+			await addUserChat(userToAddId,chatData.key);
+
+			UserAddedName = `${userToAdd.firstName} ${userToAdd.lastName}`;
+	});
+
+	if(newUsers.length===0) return;
+	
+	await updateChatData(chatData.key,userLoggedInData.userId,{users:existingUsers.concat(newUsers)})
+
+	const moreUsersMessage = newUsers.length > 1 ? `and ${newUsers.length-1} others ` : '';
+	const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${UserAddedName} ${moreUsersMessage}to the chat`;
+
+	await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText);
 }
