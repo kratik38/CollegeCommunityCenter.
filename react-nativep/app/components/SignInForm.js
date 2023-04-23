@@ -9,18 +9,16 @@ import { useDispatch } from 'react-redux';
 import { signIn } from '../utils/actions/authActions';
 import colors from '../constants/colors';
 
-	const testMode = true;//for development purpose 
-
 	const initialState = {
 		inputValues:{
-			email:testMode?"kratik@gmail.com":"",
-			password:testMode?"kratik":""
+			email:"",
+			password:""
 		},
 		inputValidities:{
-			email:testMode,
-			password:testMode
+			email:'',
+			password:''
 		},
-		formIsValid:testMode
+		formIsValid:false
 	}
 
 const SignInForm = ()=>{
