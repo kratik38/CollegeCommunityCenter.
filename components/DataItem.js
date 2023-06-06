@@ -8,42 +8,87 @@ const imageSize = 40;
 
 const DataItem = props =>{
 
-	const { title,subTitle,image,type,isChecked ,icon} = props;	
+	const { title,subTitle,image,type,isChecked,icon,date,day} = props;	
 
 	const hideImage = props.hideImage && props.hideImage===true;
+	
+	let showDay;
+	const itemContainer= {...styles.container,...styles.buttonContainer};
 
-	return <TouchableWithoutFeedback onPress={props.onPress}>
-		 <View style={styles.container}>
+	if(type==='notice'){
+		itemContainer.backgroundColor = "#deeded";
+	  itemContainer.shadowRadius = 1;
+		itemContainer.shadowOffset = {
+      width: 0,
+      height: 0
+    };
+		itemContainer.borderRadius = 15;
+		itemContainer.margin = 5;
+	}
 
+	switch(day){
+		case 0:
+			showDay="Monday";
+			break;
+		case 1:
+			showDay="Tuesday";
+			break;
+		case 2:
+			showDay="Wednesday"
+			break;
+		case 3:
+			showDay="Thursday"
+			break;
+		case 4:
+			showDay="Friday"
+			break;
+		case 5:
+			showDay="Saturday"
+			break;
+		case 6:
+			showDay="Sunday"
+			break;
+	}
+	
+
+	return <TouchableWithoutFeedback onPress={props.onPress} >
+		 <View style={itemContainer}>
+
+				{
+					type==="notice" &&<View>
+			   	  <Text>{showDay}</Text>
+					  <Text>{date}</Text>
+					</View>
+					
+				}
+		    {
+					icon &&
+					<View style={styles.leftIconContainer}>
+						<AntDesign name={icon} size={20} color={colors.blue}/>
+						</View>	
+				}
 				{
 					!icon && !hideImage &&
 		      <ProfileImage 
 					 uri={image}
 					 size={imageSize}/>
 				}	
-				{
-					icon &&
-					<View style={styles.leftIconContainer}>
-						<AntDesign name={icon} size={20} color={colors.blue}/>
-						</View>	
-				}
+ 				{
 				<View style={styles.textContainer}>
-
-						<Text
-							numberOfLines={1}
-							style={{... styles.title,...{color:type==="button" ? colors.blue : colors.textColor}}}>
-							{title}
-						</Text>
-					{
-					subTitle &&
-						<Text 
-							style={styles.subTitle}>
-							{subTitle}
-						</Text>
-					}
-				</View> 
-
-				{
+			<Text
+				style={{... styles.title,...{color:type==="button" ? colors.blue : colors.textColor}}}>
+				{title}
+			</Text>
+			{
+			subTitle &&
+			<Text 
+				style={styles.subTitle}>
+				{subTitle}
+			</Text>
+			}
+			</View> 
+			}	
+			{
 					type ==="checkbox" &&
 					<View style={{...styles.iconContainer,... isChecked && styles.checkedStyle}}>
 						<Ionicons name="checkmark" size={18} color="white"/>
@@ -66,7 +111,7 @@ const styles = StyleSheet.create({
 	container:{
 		flexDirection:'row',
 		paddingVertical:7,
-		borderBottomColor:colors.extraLightGrey,
+		borderBottomColor:colors.extraLightGreyd,
 		borderBottomWidth:1,
 		alignItems:'center',
 		minHeight:50
@@ -82,7 +127,7 @@ const styles = StyleSheet.create({
 	},
 	subTitle:{ 
 		fontFamily:'regular',
-		color:colors.grey,
+		color:colors.textColor,
 		letterSpacing:0.3
 	},
 	iconContainer:{
@@ -102,7 +147,20 @@ const styles = StyleSheet.create({
 		justifyContent:'center',
 		width:imageSize,
 		height:imageSize
-	}
+	},
+	buttonContainer:{
+		backgroundColor:colors.darkYellow,
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowRadius: 5,
+    shadowOpacity: 1.0,
+		margin:10
+}
 });
 
 export default DataItem;

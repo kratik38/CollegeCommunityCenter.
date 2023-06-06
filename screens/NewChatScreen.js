@@ -62,7 +62,7 @@ const NewChatScreen = props => {
 					}
 					</HeaderButtons>
 				},
-				headerTitle: isGroupChat? "Add participants":"New chat"
+				headerTitle: isGroupChat? "Add participants":"Search Admin"
 			})
 	},[chatName,selectedUsers]);
 
@@ -215,7 +215,7 @@ const NewChatScreen = props => {
 					style={styles.noResultsIcon}
 					/>
 
-					<Text style={styles.noResultsText}>Enter a name to search for a user!</Text>	
+					<Text style={styles.noResultsText}>Enter a name to search for a Admin</Text>	
 					</View>
 				)
 			}

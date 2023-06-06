@@ -9,12 +9,19 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MenuProvider } from 'react-native-popup-menu';
+import { LogBox } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
-// AsyncStorage.clear();
+
+//Ignore all log notifications
+// AsyncStorage.clear();r
 // react native old is version is used to tackel the errors because of newer version
 
+
 export default function App() {
+
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 
   const [appIsLoaded,setAppIsLoaded] = useState(false);
   

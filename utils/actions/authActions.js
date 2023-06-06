@@ -2,7 +2,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { getFirebaseApp } from "../firebaseHelper";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { child, get, getDatabase, ref, set, update } from 'firebase/database';
+import { child, getDatabase, get, ref, set, update } from 'firebase/database';
 import { authenticate, logout } from "../../store/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserData } from "./userActions";
@@ -28,7 +28,7 @@ export const signUp = (firstName,lastName,email,password) =>{
 				  dispatch(authenticate({token:accessToken,userData}));
 					saveDataToStorage(accessToken,uid,expiryDate);
 					await storedPushToken(userData);
-					
+
 					timer = setTimeout(()=>{
 							dispatch(userLogout(userData));
 					},millisecondsUntilExpiry)
@@ -66,7 +66,7 @@ export const signIn = (email,password) =>{
 				  dispatch(authenticate({token:accessToken,userData}));
 					saveDataToStorage(accessToken,uid,expiryDate);
 					await storedPushToken(userData);
-					
+
 					timer = setTimeout(()=>{
 							dispatch(userLogout(userData));
 					},millisecondsUntilExpiry)
@@ -86,7 +86,7 @@ export const signIn = (email,password) =>{
 }
 
 
-export const userLogout = (userData)=>{
+export const userLogout = (userdata)=>{
 	return async dispatch =>{
 	
 		try{
@@ -95,7 +95,7 @@ export const userLogout = (userData)=>{
 		catch(error){
 			console.log(error);
 		}
-
+		
 		AsyncStorage.clear();
 		clearTimeout(timer);
 		dispatch(logout());

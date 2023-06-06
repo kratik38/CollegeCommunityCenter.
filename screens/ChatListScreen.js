@@ -7,6 +7,7 @@ import DataItem from '../components/DataItem';
 import PageContainer from '../components/PageContainer';
 import PageTitle from '../components/PageTitle';
 import colors from '../constants/colors';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const ChatListScreen = props => {
 	
@@ -16,7 +17,6 @@ const ChatListScreen = props => {
 	
 	const userData = useSelector(state => state.auth.userData);
 	const storedUsers = useSelector(state=>state.users.storedUsers);
-
 	const userChats = useSelector(state=>{
 		const chatsData = state.chats.chatsData
 		return Object.values(chatsData).sort((a,b)=>{
@@ -29,10 +29,14 @@ const ChatListScreen = props => {
 			props.navigation.setOptions({
 				headerRight:()=>{
 						return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+						<View style={styles.headerButtonContainer}>
+							<FontAwesome name="search" size={20} color={colors.blue} />
 						<Item
-						title="New chat"
-						iconName='create-outline'
+						title="Search Admin"
+						iconName=""
+						IconComponent={MaterialCommunityIcons}
 						onPress={()=>props.navigation.navigate("NewChat")}/>
+						</View>
 					</HeaderButtons>
 				}
 			})
@@ -59,7 +63,7 @@ const ChatListScreen = props => {
 	  	if(!chatUsers.includes(userData.userId)){
 		   	chatUsers.push(userData.userId);
 		  }
-			console.log(chatName);
+			
 		 navigationProps = {
 			newChatData : { 
 			 users : chatUsers,
@@ -75,12 +79,15 @@ const ChatListScreen = props => {
 
 	return <PageContainer>
 
-				<PageTitle text="Chats"/>
+				<PageTitle text="Communitites"/>
 				
-				<TouchableOpacity
+				<TouchableOpacity style={styles.newGroupTextContainer}
 					onPress={()=>props.navigation.navigate("NewChat",{isGroupChat:true})}>
+						<View style={{margin:4}}>
+					    <FontAwesome name="plus" size={17} color={colors.blue}/>
+						</View>
 					<Text style={styles.newGroupText}>
-						New Group
+						Create Community
 					</Text>
 				</TouchableOpacity>
 				<FlatList 
@@ -108,6 +115,7 @@ const ChatListScreen = props => {
 						image = otherUser.profilePicture;
 						}
 						return <DataItem 
+										type={"chatList"}
 						        title={title}
 										subTitle={subTitle}
 										image={image}
@@ -122,12 +130,42 @@ const styles = StyleSheet.create({
 container:{
 	flex:1,
 	justifyContent:'center',
-	alignItems:'center'
+	alignItems:'center',
+	backgroundColor: '#FFFFFF'
+},
+newGroupTextContainer:{
+	flexDirection:'row',
+	borderRadius:10,
+	backgroundColor:colors.lightYellow,
+	margin:10,
+	width:200,
+	padding:3
 },
 newGroupText:{
-	color:colors.blue,
+	marginLeft:10,
+	marginTop:1,
+	color:colors.textColor,
 	fontSize:17,
 	marginBottom:5
+},
+buttonContainer: {
+	backgroundColor: '#2E9298',
+	borderRadius: 10,
+	padding: 10,
+	shadowColor: '#000000',
+	shadowOffset: {
+		width: 0,
+		height: 3
+	},
+	shadowRadius: 5,
+	shadowOpacity: 1.0
+},
+headerButtonContainer:{
+	flexDirection:'row',
+	backgroundColor:colors.lightYellow,
+	padding:5,
+	borderRadius:15,
+	margin:3,
 }
 });
 export default ChatListScreen;

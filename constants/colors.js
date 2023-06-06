@@ -7,5 +7,12 @@ export default colors = {
 	textColor:'#1c1e21',
 	primary:'#32d48c',
 	red:'#e74c3c',
-	beige:'#FEF5C3'
+	beige:'#FEF5C3',
+	darkYellow:'#F2C028',
+	lightYellow:'#F9E278',
+	darkPurple:'#3A225D',
+	lightPurple:'#64517C',
+	newWhite:'#F7F9FB',
+	newLightBlue:'#8FC1E3',
+	newDarkBlue:'#5085A5',
 }

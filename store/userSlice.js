@@ -8,7 +8,6 @@ const userSlice = createSlice({
 	reducers:{
 		setStoredUsers:(state,action)=>{
 			const newUsers = action.payload.newUsers;
-			console.log(newUsers);
 			const existingUsers = state.storedUsers;
 
 			const usersArray = Object.values(newUsers);

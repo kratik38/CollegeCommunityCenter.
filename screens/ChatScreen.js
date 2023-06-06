@@ -7,7 +7,7 @@ import colors from '../constants/colors';
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
 import Bubble from '../components/Bubble';
-import { createChat , sendImage, sendTextMessage } from '../utils/actions/chatActions';
+import { createChat , getBoardMessages, sendImage, sendTextMessage } from '../utils/actions/chatActions';
 import ReplyTo from '../components/ReplyTo';
 import { launchImagePicker, openCamera, uploadImageAsync } from '../utils/imagePickerHelper';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -28,7 +28,7 @@ const ChatScreen = (props) => {
 
 	const userData = useSelector(state=>state.auth.userData);
 	const storedUsers = useSelector(state=>state.users.storedUsers);
-	const storedChats = useSelector(state=>state.chats.chatsData);
+	const storedChats = useSelector(state=>state.chats.chatsData ?? {});
 	const chatMessages = useSelector(state=>{
 		if(!chatId) return [];
 
@@ -63,8 +63,24 @@ const ChatScreen = (props) => {
 	useEffect(()=>{
 		if(!chatData) return;
 
+		const newChatName = (chatData.chatName!==""&&chatData.chatName!==undefined) ? chatData.chatName : getChatTitleFromName()
+
 		props.navigation.setOptions({
-			headerTitle: chatData.chatName!=="" ? chatData.chatName : getChatTitleFromName(),
+			headerTitle: ()=>{
+				return chatData.isGroupChat?<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+				{
+					chatId &&
+					<Item 
+					 title={newChatName}
+					 onPress={async ()=> {
+					  const boardData = await getBoardMessages(chatId);
+						chatData.isGroupChat &&
+									props.navigation.navigate("DataList",{chatId,type:'notice',title:'Weekly Notice Board',data:Object.values(boardData)})}}
+						backgroundColor={'#deeded'}
+					 />
+				}	
+				</HeaderButtons>:<Text style={{fontSize:'18'}}>{newChatName}</Text>
+			},
 			headerRight: ()=>{
 				return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 					{
@@ -88,14 +104,16 @@ const ChatScreen = (props) => {
 		
 		try {
 
-			let id = chatId;
+			
 
+			let id = chatId;
+			
 			if(!id){
 				id = await createChat(userData.userId, props.route.params.newChatData);
 				setChatId(id);
 			}
 
-			await sendTextMessage(id, userData, messageText,replyingTo && replyingTo.key,chatUsers );
+			await sendTextMessage(id, userData, messageText,replyingTo && replyingTo.key,chatUsers);
 
 			setMessageText("");
 			setReplyingTo(null);
@@ -204,7 +222,9 @@ const ChatScreen = (props) => {
 											text={message.text}
 											messageId={message.key}
 											userId={userData.userId}
+											adminId={storedChats[chatId].adminId}
 											chatId={chatId}
+											isGroupChat={storedChats[chatId].isGroupChat}
 											date={message.sentAt}
 											name={!chatData || isOwnMessage ? undefined : name}
 											setReply={()=>{setReplyingTo(message)}}
