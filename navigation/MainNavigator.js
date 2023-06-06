@@ -1,6 +1,7 @@
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications'; 
-import React, { useEffect, useState, useRef} from 'react';
+
+import React, { useEffect, useState } from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,7 +17,7 @@ import { getFirebaseApp } from '../utils/firebaseHelper';
 import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { setChatsData } from '../store/chatSlice';
 import { setStoredUsers } from '../store/userSlice';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import commonStyles from '../constants/commonStyles';
 import colors from '../constants/colors';
 import { setChatMessages } from '../store/messagesSlice';
@@ -24,6 +25,7 @@ import { setStarredMessages } from '../store/messagesSlice';
 import ContactScreen from '../screens/ContactScreen';
 import DataListScreen from '../screens/DataListScreen';
 import { StackActions, useNavigation } from '@react-navigation/native';
+import { useRef } from 'react';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();  
@@ -38,13 +40,17 @@ const TabNavigator = ()=>{
       <Tab.Screen name="ChatList" component={ChatListScreen} options={{
         tabBarLabel:'Chats',
         tabBarIcon:({ color, size })=>(
+          <View style={styles.tabIconContainer}>
           <Ionicons name="chatbubble-ellipses-outline" size={size} color={color}/>
+          </View>
         )
       }}/>
       <Tab.Screen name="Settings" component={SettingsScreen} options={{
         tabBarLabel:'Settings',
         tabBarIcon:({color, size})=>(
-          <Ionicons name="ios-settings-outline" size={size} color={color} />
+          <View style={styles.tabIconContainer}>
+            <Ionicons name="ios-settings-outline" size={size} color={color} />
+          </View>
         )
       }}/>
     </Tab.Navigator>
@@ -126,6 +132,7 @@ const MainNavigator = (props)=>{
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+
 
   useEffect(()=>{
 
@@ -223,6 +230,19 @@ const MainNavigator = (props)=>{
       </KeyboardAvoidingView>
 	)
 }
+
+styles = StyleSheet.create({
+  tabIconContainer:{
+    backgroundColor:colors.darkYellow,
+    margin:10,
+    padding:10,
+    borderRadius:50,
+    height:80,
+    width:80,
+    alignItems:'center',
+    justifyContent:'center'
+  }
+})
 
 export default MainNavigator;
 

@@ -3,6 +3,7 @@ import { FlatList, Text } from "react-native";
 import PageContainer from "../components/PageContainer";
 import { useSelector } from "react-redux";
 import DataItem from "../components/DataItem";
+import { formatAmPm } from "../components/Bubble";
 
 const DataListScreen = props=>{
 
@@ -20,7 +21,7 @@ const DataListScreen = props=>{
 				 data={data}
 				 keyExtractor={item=> item.messageId || item}
 				 renderItem={(itemData)=>{
-						let key, onPress, image, title, subTitle, itemType;
+						let key, onPress, image, title, subTitle, itemType,day,date;
 
 						if(type==="users")
 						{
@@ -57,14 +58,28 @@ const DataListScreen = props=>{
 							itemType = "";
 							onPress = ()=>{}
 						}
+						else if(type==='notice'){
+
+							title = itemData.item.messageText;
+							const storedDate = itemData.item.putAt;
+							const d = new Date(storedDate);
+						  day = d.getDay(storedDate);
+							date = data && formatAmPm(storedDate);
+							key = itemData.item.chatId.messageId;
+							onPress = ()=>{}
+							itemType = "notice"
+						}
 
 						return <DataItem
 						        key={key}
 										onPress={onPress}
 										image={image}
 										title={title}
+										hideImage={true}
 										subTitle={subTitle}
 										type={itemType}
+										date={date}
+										day={day}
 										/>
 
 				 }}

@@ -18,7 +18,7 @@ const ChatSettingsScreen = props => {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const chatId = props.route.params.chatId;
-    const chatData = useSelector(state => state.chats.chatsData[chatId] || {});
+    const chatData = useSelector(state => state.chats.chatsData[chatId]);
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
     const starredMessages = useSelector(state=>state.messages.starredMessages[chatId] ?? {});
@@ -126,13 +126,16 @@ const ChatSettingsScreen = props => {
 
             <View style={styles.sectionContainer}>
                 <Text style={styles.heading}>{chatData.users.length} Participants</Text>
-
+             {
+                chatData.adminId===userData.userId &&
                 <DataItem
                     title="Add users"
                     icon="plus"
                     type="button"
                     onPress={()=>props.navigation.navigate("NewChat",{isGroupChat:true,existingUsers:chatData.users,chatId})}
                 />
+
+             }
 
                 {
                     chatData.users.slice(0,4).map(uid => {
@@ -173,10 +176,10 @@ const ChatSettingsScreen = props => {
 
 
             <DataItem 
-             title="Weekly Notice Board"
+             title="Starred Messages"
              type="link"
              hideImage={true}
-             onPress={()=>props.navigation.navigate("DataList",{title:"Weekly Notice Board",data: Object.values(starredMessages), type:"messages"})}
+             onPress={()=>props.navigation.navigate("DataList",{title:"Starred Messages",data: Object.values(starredMessages), type:"messages"})}
              />
 
         </ScrollView>

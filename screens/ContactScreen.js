@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSelector } from 'react-redux';
 import PageContainer from '../components/PageContainer';
 import ProfileImage from '../components/ProfileImage';
@@ -65,12 +65,13 @@ const ContactScreen = props =>{
 			commonChats.length>0 &&
 			<>
 			<Text style={styles.heading}>{commonChats.length} {commonChats.length===1 ? "Group":"Groups"} in Common</Text>
+			<ScrollView>
 			{
 				commonChats.map(cid=>{
 					  const chatData = storedChats[cid];
 						return <DataItem 
 										key={cid}
-										title={chatData.ChatName}
+										title={chatData.chatName}
 										subTitle={chatData.latestMessageText}
 										type="link"
 										onPress={()=> props.navigation.push("ChatScreen",{chatId: cid})}
@@ -78,11 +79,12 @@ const ContactScreen = props =>{
 						        />
 				})
 			}
+			</ScrollView>
 			</>
 		}
 
 		{
-			 chatData && chatData.isGroupChat &&
+			 chatData && chatData.isGroupChat && (chatData.adminId===userData.userId)&&
 			 (
 			 isLoading ? 
 				<ActivityIndicator size='small' color={colors.primary} /> :

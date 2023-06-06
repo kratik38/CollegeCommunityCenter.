@@ -6,13 +6,14 @@ import { getUserPushTokens } from './authActions';
 export const createChat = async (loggedInUserId,chatData)=>{
 	
 	if(chatData.chatName===undefined) chatData.chatName = "";{/* added after */}
-
+	
 	const newChatData = {
 		...chatData,
 		createdBy: loggedInUserId,
 		updatedBy:loggedInUserId,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
+		adminId: loggedInUserId
 	}
 
 	const app = getFirebaseApp();
@@ -43,7 +44,7 @@ export const sendInfoMessage = async (chatId,senderId,messageText)=>{
 
 export const sendImage = async (chatId,senderData,imageUrl, replyTo,chatUsers)=>{
 
-	await sendMessage(chatId,senderId,'Image',imageUrl,replyTo,null);	
+	await sendMessage(chatId,senderData.userId,'Image',imageUrl,replyTo,null);	
 
 	const otherUsers = chatUsers.filter(uid=>uid!==senderData.userId);
 	await sendPushNotificationForUsers(otherUsers,`${senderData.firstName} ${senderData.lastName}`, `${senderData.firstName} send an image`,chatId);
@@ -126,6 +127,49 @@ try {
 	}
 }
 
+export const boardMessage= async (chatId,messageId,messageText)=>{
+
+	try {
+		const app = getFirebaseApp();
+		const dbRef = ref(getDatabase(app));
+		const childRef = child(dbRef,`noticeBoardMessages/${chatId}/${messageId}`);
+	
+		const snapShot = await get(childRef);
+	
+			if(snapShot.exists()){
+				await remove(childRef);
+			}
+			else{
+				const boardMessage = {
+					messageId,
+					chatId,
+					messageText,
+					putAt:new Date().toISOString()
+				}	
+	
+				await set(childRef,boardMessage);
+			}
+			
+		} catch (error) {
+			console.log(error);	
+		}
+	}
+
+
+export const getBoardMessages = async (chatId)=>{
+	try {
+		const app = getFirebaseApp();
+		const dbRef = ref(getDatabase(app));
+		const userRef = child(dbRef,`noticeBoardMessages/${chatId}`);
+
+		const snapshot = await get(userRef);
+		return snapshot.val() ?? {};	
+
+	} catch (error) {
+		console.log(error);
+	}
+}
+
 export const removeUserFromChat = async (userLoggedInData,userToRemoveData,chatData)=>{
 	   const userToRemoveId = userToRemoveData.userId;
 
@@ -145,7 +189,7 @@ export const removeUserFromChat = async (userLoggedInData,userToRemoveData,chatD
 		 
 		 const messageText = userLoggedInData.userId === userToRemoveData.userId ?
 		 	`${userLoggedInData.firstName} left the chat`:
-		  `${userLoggedInData.firstName} removed ${userToRemoveData.firstName} from the chat`; 
+		  `${userLoggedInData.firstName} removed ${userToRemoveData.firstName} from the community`; 
 		 
 		 await sendInfoMessage(chatData.key,userLoggedInData.userId,messageText);
 }
@@ -174,30 +218,30 @@ export const addUsersToChat = async (userLoggedInData,userToAddData,chatData)=>{
 	await updateChatData(chatData.key,userLoggedInData.userId,{users:existingUsers.concat(newUsers)})
 
 	const moreUsersMessage = newUsers.length > 1 ? `and ${newUsers.length-1} others ` : '';
-	const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${UserAddedName} ${moreUsersMessage}to the chat`;
+	const messageText = `${userLoggedInData.firstName} ${userLoggedInData.lastName} added ${UserAddedName} ${moreUsersMessage}to the community`;
 
 	await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText);
 }
 
 const sendPushNotificationForUsers = (chatUsers, title, body,chatId) =>{
-	 chatUsers.forEach(async uid=>{
+	chatUsers.forEach(async uid=>{
 
-		 const tokens = await getUserPushTokens(uid);	
-		  for(const key in tokens){
-				 const token = tokens[key];
+		const tokens = await getUserPushTokens(uid);	
+		 for(const key in tokens){
+				const token = tokens[key];
 
-				 await fetch("https://exp.host/--/api/v2/push/send", {
-					method:"POST",
-					headers:{
-						'Content-Type':'application/json'
-					},
-					body:JSON.stringify({
-						to:token,
-						title,
-						body,
-						data:{chatId}
-					})
-				 });
-			}
-	 })
+				await fetch("https://exp.host/--/api/v2/push/send", {
+				 method:"POST",
+				 headers:{
+					 'Content-Type':'application/json'
+				 },
+				 body:JSON.stringify({
+					 to:token,
+					 title,
+					 body,
+					 data:{chatId}
+				 })
+				});
+		 }
+	})
 }

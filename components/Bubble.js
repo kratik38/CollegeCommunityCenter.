@@ -6,10 +6,10 @@ import uuid from 'react-native-uuid';
 import * as Clipboard from 'expo-clipboard';
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { starMessage } from "../utils/actions/chatActions";
+import { boardMessage, starMessage } from "../utils/actions/chatActions";
 import { useSelector } from "react-redux";
 
-const formatAmPm = (dateString)=>{
+export const formatAmPm = (dateString)=>{
 	const date = new Date(dateString);
 	var hours = date.getHours();
 	var minutes = date.getMinutes();
@@ -28,7 +28,6 @@ const MenuItem = (props)=>{
 				<View style={styles.menuItemContainer}>
 					<Text style={styles.menuText}>{props.text}</Text>
 					<Icon name={props.icon} size={18}/>
-
 				</View>
 	</MenuOption>
 }
@@ -37,7 +36,7 @@ const Bubble = props =>{
 	 const menuRef = useRef(null);
 	 const id = useRef(uuid.v4());
 
-	 const { text,type,messageId,chatId,userId,date,setReply,replyingTo,name,imageUrl } = props;
+	 const { text,type,messageId,chatId,userId,date,setReply,replyingTo,name,imageUrl,adminId,isGroupChat } = props;
 
 	 const starredMessages = useSelector(state=>state.messages.starredMessages[chatId] ?? {});
 	 const storedUsers  = useSelector(state=>state.users.storedUsers);
@@ -141,6 +140,11 @@ const Bubble = props =>{
 							<MenuItem text="Copy to Clipboard" icon={'copy'} onSelect={()=>copyToClipboard(text)}/>
 							<MenuItem text={`${isStarred ? 'Unstar':'Star'} message`} icon={isStarred ? 'star-o':'star'} iconPack={FontAwesome} onSelect={()=>starMessage(messageId,chatId,userId)}/>
 							<MenuItem text="Reply " icon='arrow-left-circle' onSelect={setReply}/>
+						{
+							
+						   isGroupChat && adminId===userId &&
+							 <MenuItem text="Add to Notice Board" onSelect={()=>boardMessage(chatId,messageId,text)}/>
+						}
 						</MenuOptions>
 					</Menu>
 			</View>

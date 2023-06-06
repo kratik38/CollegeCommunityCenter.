@@ -9,7 +9,10 @@ const CustomHeaderButton = props =>{
 					{...props}
 					IconComponent={Ionicons}
 					iconSize={23}
-					color = {props.color ?? colors.blue}/>
+					color = {props.color ?? (props.backgroundColor ? colors.textColor : colors.blue)}
+					backgroundColor={props.backgroundColor && props.backgroundColor}
+					borderRadius={10}
+					padding={5}/>
 
 }
 
